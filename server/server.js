@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const path = require('path');
 const prerenderNode = require('prerender-node');
 const app = express();
 app.disable(`x-powered-by`);
@@ -11,6 +12,10 @@ const PRERENDER_KEY = process.env.PRERENDER_KEY;
 prerenderNode.set('prerenderToken', PRERENDER_KEY);
 app.use(prerenderNode);
 app.use(express.static(`build`));
+
+app.get('*', (_, response) =>
+  response.sendFile(path.resolve(__dirname, '..', 'build', 'index.html'))
+);
 
 app.listen(PORT, HOSTNAME, () => {
   const serverAddress = `http://${HOSTNAME}:${PORT}`;
